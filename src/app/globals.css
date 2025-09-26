@@ -1,0 +1,50 @@
+:root {
+  --foreground: #ffffff;
+  --background: #171717;
+
+  --aquamarine: #50fff8;
+  --white: #fff;
+  --dark: #292c35;
+  --background-dark: #212227;
+  --background: #292c35;
+  --background-light: #3e4149;
+  --background-light2: #3e4456;
+  --selected: #2f4f4f;
+  --brand: #50fff8;
+  --black: #121419;
+  --black-light: #191c24;
+  --gray: #3e4456;
+  --red: #ab3131;
+  --green: #31ab58;
+  --yellow: #c8dc2c;
+  --orange: #ff7224;
+  --light-gray: #8c93ab;
+  --border: #6c6c6c;
+  --plate-dark: #0c0c0c;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+

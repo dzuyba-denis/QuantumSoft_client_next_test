@@ -1,0 +1,35 @@
+.node {
+  cursor: pointer;
+  border: 1px solid var(--light-gray);
+  border-radius: 5px;
+  margin-top: 8px;
+  margin-left: 10px;
+
+  display: inline-block;
+  padding: 0px 10px 0px 10px;
+  /* width: 70%; */
+  background-color: var(--dark);
+}
+
+.ul {
+  list-style-type: none;
+  padding-left: 1.5rem;
+}
+
+.sign {
+  width: 5px;
+  display: inline-block;
+  align-items: center;
+}
+
+.selected {
+  border: 1px solid var(--aquamarine);
+  color: var(--aquamarine);
+}
+.deleted {
+  text-decoration: line-through;
+}
+
+.li {
+  white-space: nowrap;
+}

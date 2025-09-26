@@ -1,0 +1,37 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 50vh;
+}
+.tree {
+  flex: 1;
+  border: 1px solid #ccc;
+  margin: 10px;
+  padding: 10px;
+  overflow: auto;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.get_node {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+  column-gap: 10px;
+  padding: 10px;
+}
+
+.toolbar button,
+.get_node button {
+  cursor: pointer;
+  padding: 5px;
+}
+
