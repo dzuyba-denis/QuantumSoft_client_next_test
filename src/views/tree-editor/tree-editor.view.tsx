@@ -120,7 +120,6 @@ export default function TreeEditorView() {
 
     TreeNodeService.apply(data)
       .then((res) => {
-        console.log(res);
         refreshDbTree();
         saveCache();
         alert("Changes saved");
@@ -148,7 +147,11 @@ export default function TreeEditorView() {
         </div>
       </div>
       <div className={styles.toolbar}>
-        <button onClick={addClick}>Add</button>
+        <button
+          disabled={!selectedCachedTreeNode || selectedCachedTreeNode.deleted || selectedCachedTreeNode.state === "deleted"}
+          onClick={addClick}>
+          Add
+        </button>
         <button
           disabled={!selectedCachedTreeNode || selectedCachedTreeNode.deleted || selectedCachedTreeNode.state === "deleted"}
           onClick={editClick}>
