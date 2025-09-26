@@ -119,7 +119,7 @@ export default function TreeEditorView() {
     });
 
     TreeNodeService.apply(data)
-      .then((res) => {
+      .then(() => {
         refreshDbTree();
         saveCache();
         alert("Changes saved");

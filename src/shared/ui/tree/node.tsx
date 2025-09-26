@@ -6,13 +6,13 @@ interface NodeProps<T extends TreeNode> {
   node: T; // Данные ноды
   nodes: T[]; // Весь массив данных переданный в дерево
   selected?: T;
-  setSelected: (data: any) => void;
+  setSelected: (data: T) => void;
 }
 
 export default function Node<T extends TreeNode>({ node, nodes, selected, setSelected }: NodeProps<T>) {
   const child = nodes.filter((item) => item.parentid === node.id);
 
-  function onNodeClick(e: any) {
+  function onNodeClick(e: React.MouseEvent<HTMLLIElement>) {
     e.preventDefault();
     e.stopPropagation();
     setSelected(node);
