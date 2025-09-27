@@ -18,7 +18,10 @@ export class TreeNodeService {
       return res.json();
     });
   }
-  static async apply(data: { rename?: { id: string; value: string }[]; delete?: { id: string }[] }): Promise<{ ok: boolean }> {
+  static async apply(data: {
+    rename?: { id: string; value: string }[];
+    delete?: { id: string }[];
+  }): Promise<{ ok: boolean; deleted: { id: string }[] }> {
     return fetch(config.API_URL + "/tree-nodes/apply", {
       method: "POST",
       headers: {

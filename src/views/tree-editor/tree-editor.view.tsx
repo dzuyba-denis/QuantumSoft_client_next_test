@@ -25,6 +25,37 @@ export default function TreeEditorView() {
     });
   }
 
+  function setChachedNodesAndSelectedCachedTreeNode(nodes: CacheTreeNode[]) {
+    setCachedNodes(nodes);
+    if (selectedCachedTreeNode) {
+      const found = nodes.find((n) => n.id === selectedCachedTreeNode.id);
+      setSelectedCachedTreeNode(found || null);
+    }
+  }
+
+  function isParentDeleted(node: TreeNode): boolean {
+    const found = cachedNodes.find((n) => n.id === node.parentid);
+    return found?.deleted || found?.state === "deleted" || false;
+  }
+
+  function deleteChild(node: TreeNode) {
+    function getAllChildNodesRecursive(id: string): CacheTreeNode[] {
+      const res: CacheTreeNode[] = [];
+      for (let i = 0; i < cachedNodes.length; i++) {
+        if (cachedNodes[i].parentid === id) {
+          res.push(cachedNodes[i]);
+          const childNodes = getAllChildNodesRecursive(cachedNodes[i].id);
+          res.push(...childNodes);
+        }
+      }
+      return res;
+    }
+    const childNodes = getAllChildNodesRecursive(node.id);
+    childNodes.forEach((n) => {
+      if (!n.deleted && n.state !== "deleted") n.state = "deleted";
+    });
+  }
+
   function getNodeClick() {
     if (!selectedDbTreeNode) return;
     TreeNodeService.getOne(selectedDbTreeNode.id)
@@ -34,7 +65,12 @@ export default function TreeEditorView() {
           alert("Already has this node");
           return;
         }
-        setCachedNodes([...cachedNodes, { ...res, state: "old" }]);
+        let state = "old";
+        if (isParentDeleted(res)) {
+          state = "deleted";
+          deleteChild(res);
+        }
+        setChachedNodesAndSelectedCachedTreeNode([...cachedNodes, { ...res, state: state === "deleted" ? "deleted" : "old" }]);
       })
       .catch((e) => {
         alert("Error on getting node: " + e.message);
@@ -51,18 +87,19 @@ export default function TreeEditorView() {
       deleted: false,
       state: "new",
     };
-    setCachedNodes([...cachedNodes, newNode]);
+    setChachedNodesAndSelectedCachedTreeNode([...cachedNodes, newNode]);
   }
 
   function deleteClick() {
     if (!selectedCachedTreeNode || selectedCachedTreeNode.deleted || selectedCachedTreeNode.state === "deleted") return;
-    setCachedNodes(cachedNodes.map((n) => (n.id === selectedCachedTreeNode.id ? { ...n, state: "deleted" } : n)));
+    setChachedNodesAndSelectedCachedTreeNode(cachedNodes.map((n) => (n.id === selectedCachedTreeNode.id ? { ...n, state: "deleted" } : n)));
   }
 
   function resetClick() {
     TreeNodeService.reset().then((res) => {
       setAllNodes(res.data);
       setCachedNodes([]);
+      setSelectedCachedTreeNode(null);
     });
   }
 
@@ -72,7 +109,9 @@ export default function TreeEditorView() {
     if (!newValue) return;
     let state = selectedCachedTreeNode.state;
     if (state !== "new") state = "edited";
-    setCachedNodes([...cachedNodes.map((n) => (n.id === selectedCachedTreeNode.id ? { ...n, value: newValue, state } : n))]);
+    setChachedNodesAndSelectedCachedTreeNode([
+      ...cachedNodes.map((n) => (n.id === selectedCachedTreeNode.id ? { ...n, value: newValue, state } : n)),
+    ]);
   }
 
   function saveCacheRemove() {
@@ -102,7 +141,7 @@ export default function TreeEditorView() {
     saveCacheRemove();
     saveCacheNew();
     saveCacheRename();
-    setCachedNodes(cachedNodes.map((n) => ({ ...n, state: "old" })));
+    setChachedNodesAndSelectedCachedTreeNode(cachedNodes.map((n) => ({ ...n, state: "old" })));
   }
 
   function saveClick() {
@@ -119,8 +158,16 @@ export default function TreeEditorView() {
     });
 
     TreeNodeService.apply(data)
-      .then(() => {
+      .then((res) => {
         refreshDbTree();
+        // Отмечаем удаленные ноды из ответа от сервера
+        res.deleted.forEach((n) => {
+          const cachedNode = cachedNodes.find((cn) => cn.id === n.id);
+          if (cachedNode) {
+            cachedNode.deleted = true;
+            cachedNode.state === "old";
+          }
+        });
         saveCache();
         alert("Changes saved");
       })
