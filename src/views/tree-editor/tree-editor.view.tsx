@@ -91,7 +91,17 @@ export default function TreeEditorView() {
   }
 
   function deleteClick() {
+    function deleteChildren(id: string) {
+      cachedNodes.forEach((n) => {
+        if (n.parentid === id && !n.deleted && n.state != "deleted") {
+          n.state = "deleted";
+          deleteChildren(n.id);
+        }
+      });
+    }
+
     if (!selectedCachedTreeNode || selectedCachedTreeNode.deleted || selectedCachedTreeNode.state === "deleted") return;
+    deleteChildren(selectedCachedTreeNode.id);
     setChachedNodesAndSelectedCachedTreeNode(cachedNodes.map((n) => (n.id === selectedCachedTreeNode.id ? { ...n, state: "deleted" } : n)));
   }
 
